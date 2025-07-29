@@ -1,0 +1,1 @@
+/usr/bin/c++ -g CMakeFiles/chip8_emulator.dir/main.cpp.o "CMakeFiles/chip8_emulator.dir/home/artur/Projekty/CHIP-8/CHIP-8/src/chip-8.cpp.o" -o chip8_emulator  -lallegro_acodec -lallegro_audio -lallegro_color -lallegro_image -lallegro_main -lallegro_memfile -lallegro_physfs -lallegro_primitives -lallegro_ttf -lallegro_font -lallegro 
