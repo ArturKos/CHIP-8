@@ -1,9 +1,12 @@
 
 <img width="1023" height="801" alt="chip-8_welcome_screen" src="https://github.com/user-attachments/assets/2012100c-40e6-4a47-ac84-8ec8e1b190e0" />
 
+YouTube link:
+https://youtu.be/ehfH5C3WpYU
+
 # CHIP-8 Emulator
 
-A simple CHIP-8 emulator written in C++ using the Allegro 5 library for graphics, sound, and input.
+A simple CHIP-8 emulator written in C/C++ using the Allegro 5 library for graphics, sound, and input.
 
 ## Features
 
