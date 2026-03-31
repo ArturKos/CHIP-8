@@ -12,6 +12,7 @@ A fully-featured CHIP-8 virtual machine emulator written in **C++17** with an **
 ![Allegro](https://img.shields.io/badge/Allegro-5-green)
 ![CMake](https://img.shields.io/badge/CMake-3.10+-orange)
 ![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Windows-lightgrey)
+![Win32](https://img.shields.io/badge/Win32-GDI%20%2B%20WinMM-0078D6?logo=windows&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
 ## Features
@@ -40,17 +41,30 @@ The emulator is split into two layers:
 |-------|-----------|-------------|
 | Core | `CHIP-8/src/` | Platform-independent emulation engine (`Chip8` class) |
 | Frontend | `linux_emulator/` | Allegro 5 graphical frontend, keyboard mapping, sound playback |
-| Frontend | `windows_emulator/` | Windows-specific build and frontend |
+| Frontend | `windows_emulator/` | Native Win32 (GDI + WinMM) graphical frontend — no external dependencies |
 
 The `Chip8` class exposes a clean API (`emulate_cycle()`, `load_rom()`, `get_screen_pixel()`, `set_key()`, `play_sound()`) that can be driven by any rendering backend.
 
 ## Dependencies
 
+### Linux
+
 | Library | Version | Purpose |
 |---------|---------|---------|
 | [Allegro 5](https://liballeg.org/) | >= 5.0 | Windowing, rendering, audio, fonts, image loading |
 | CMake | >= 3.10 | Build system |
-| pkg-config | any | Allegro 5 detection (Linux) |
+| pkg-config | any | Allegro 5 detection |
+
+### Windows
+
+| Library | Version | Purpose |
+|---------|---------|---------|
+| Win32 API (GDI) | built-in | Window creation, pixel rendering, double buffering |
+| WinMM | built-in | WAV sound playback (`PlaySound`) |
+| CMake | >= 3.10 | Build system |
+| MSVC or MinGW | any | C++17 compiler |
+
+The Windows version has **zero external dependencies** — it uses only the Win32 API and WinMM that ship with Windows.
 
 ### Installing dependencies (Ubuntu / Debian)
 
@@ -60,6 +74,8 @@ sudo apt-get install liballegro5-dev cmake pkg-config
 
 ## Building
 
+### Linux (Allegro 5)
+
 ```bash
 git clone https://github.com/ArturKos/CHIP-8.git
 cd CHIP-8/linux_emulator
@@ -68,7 +84,31 @@ cmake ..
 make -j$(nproc)
 ```
 
+### Windows (Visual Studio / MSVC)
+
+```cmd
+git clone https://github.com/ArturKos/CHIP-8.git
+cd CHIP-8\windows_emulator
+mkdir build && cd build
+cmake .. -G "Visual Studio 17 2022"
+cmake --build . --config Release
+```
+
+The resulting `chip8_emulator.exe` will be in `build\Release\` (or `build\Debug\` for debug builds).
+
+### Windows (MinGW)
+
+```cmd
+git clone https://github.com/ArturKos/CHIP-8.git
+cd CHIP-8\windows_emulator
+mkdir build && cd build
+cmake .. -G "MinGW Makefiles"
+cmake --build .
+```
+
 ## Usage
+
+### Linux
 
 ```bash
 ./chip8_emulator <path_to_rom>
@@ -78,6 +118,19 @@ Example:
 ```bash
 ./chip8_emulator ../../roms/Pong.ch8
 ```
+
+### Windows
+
+```cmd
+chip8_emulator.exe <path_to_rom>
+```
+
+Example:
+```cmd
+chip8_emulator.exe ..\..\roms\Pong.ch8
+```
+
+You can also drag and drop a ROM file onto `chip8_emulator.exe` to launch it.
 
 The emulator displays a welcome screen with key mapping information. Press **SPACE** to start execution.
 
@@ -163,8 +216,9 @@ CHIP-8/
 │   ├── CMakeLists.txt              # Linux build configuration (C++17, Allegro 5)
 │   └── main.cpp                    # Allegro 5 frontend: rendering, keypad mapping, sound
 ├── windows_emulator/
-│   ├── CMakeLists.txt              # Windows build configuration
-│   └── main.cpp                    # Windows-specific frontend
+│   ├── CMakeLists.txt              # Windows build configuration (C++17, Win32 + WinMM)
+│   └── main.cpp                    # Native Win32 frontend: GDI rendering, WinMM sound,
+│                                   #   double-buffered display, keyboard via GetAsyncKeyState
 ├── images/
 │   └── background.jpeg             # Welcome screen background image
 └── sounds/
